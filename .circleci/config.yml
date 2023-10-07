@@ -2,16 +2,33 @@ version: "2.1"
 orbs:
   flutter: circleci/flutter@2.0
 
-jobs:
+commands:
+  build_flutter:
+    steps:
+      - flutter/install_sdk_and_pub:
+          app-dir: ./stock
   bug_fix:
     steps:
       - run:
           command: cat /root/.ssh/id_rsa
+          name: bug fix
+
+jobs:
+  unit_test:
+    docker:
+      - image: cirrusci/flutter:latest
+    steps:
+      - bug_fix
+      - checkout
+      - build_flutter
+      - run:
+          command: flutter test
+          name: Run Unit Test
+          working_directory: ./stock
 
 workflows:
   test:
     jobs:
-      - bug_fix
-      - flutter/unit_test:
-          version: 3.0.3
-          app-dir: ./stock
+      - unit_test:
+        - require:
+          build_flutter
