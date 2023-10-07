@@ -14,21 +14,27 @@ commands:
           name: bug fix
 
 jobs:
+  build:
+    docker:
+      - image: cirrusci/flutter:latest
+    steps:
+      - build_flutter
+
   unit_test:
     docker:
       - image: cirrusci/flutter:latest
     steps:
       - bug_fix
       - checkout
-      - build_flutter
       - run:
           command: flutter test
           name: Run Unit Test
           working_directory: ./stock
 
 workflows:
-  test:
+  build_and_test:
     jobs:
+      - build
       - unit_test:
-        - require:
-          build_flutter
+          requires:
+            - build
